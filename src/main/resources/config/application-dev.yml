@@ -1,0 +1,14 @@
+# spring
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  datasource:
+    url: jdbc:h2:file:~/saber/db;FILE_LOCK=FS
+    username: sa
+    password: sa
+
+# 输出 SQL 绑定的参数
+logging:
+  level.org.hibernate.type.descriptor.sql.BasicBinder: trace

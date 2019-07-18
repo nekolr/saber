@@ -1,0 +1,9 @@
+# spring
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  datasource:
+    url: jdbc:h2:file:~/saber/db;FILE_LOCK=FS
+    username: sa
+    password: sa

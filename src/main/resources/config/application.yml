@@ -1,0 +1,61 @@
+# spring
+spring:
+  application:
+    name: saber
+  jackson:
+    time-zone: GMT+8
+  # spring jpa
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: true
+  # profile active dev
+  profiles:
+    active: dev
+  # i18n
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+  servlet:
+    # 文件上传
+    multipart:
+      # 单个文件大小限制
+      max-file-size: 10MB
+      # 单次上传总大小限制
+      max-request-size: 10MB
+  # cache
+  cache:
+    caffeine:
+      # initialCapacity     初始的缓存空间大小
+      # maximumSize         缓存的最大容量
+      # expireAfterWrite    最后一次写入后多久失效
+      # expireAfterAccess   距离最后一次访问或写入后多久失效
+      spec: initialCapacity=50,maximumSize=500,expireAfterWrite=3h,expireAfterAccess=3h
+
+# tomcat
+server:
+  port: 8888
+  address: 127.0.0.1
+  tomcat:
+    basedir: ${user.home}/saber/tmp
+
+# log
+logging:
+  file: ${user.home}/saber/saber.log
+  level.com.nekolr: info
+
+# jwt
+jwt:
+  # 私钥，当有泄露风险时请修改
+  secret: :xgj%eMd#gk+wh.`t2;XW!.dIuC&$#Lua+;%~!F=G&16Eo7b3o|GudHr%:?ijHQ3=G&:hVFcnQV?57f*)p!wNMG*Sfz%:pSU~5n,J|G%ro1blr'*'yD&z@Y&1Aa|=Bu:k
+  # jwt 过期时间
+  period: 1800s
+
+# storage
+storage:
+  # 默认使用本机文件系统
+  type: filesystem
+  filesystem:
+    # 图片存放目录
+    imgFolder: ${user.home}/saber/
+    # 图片缓存时间控制，可以带单位
+    cacheTime: 7d

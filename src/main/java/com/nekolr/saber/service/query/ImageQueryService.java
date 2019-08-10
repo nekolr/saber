@@ -2,8 +2,10 @@ package com.nekolr.saber.service.query;
 
 import com.nekolr.saber.dao.ImageRepository;
 import com.nekolr.saber.entity.Image;
+import com.nekolr.saber.entity.User;
 import com.nekolr.saber.service.dto.ImageDTO;
 import com.nekolr.saber.service.mapper.ImageMapper;
+import com.nekolr.saber.service.mapper.UserMapper;
 import com.nekolr.saber.support.PageVO;
 import com.nekolr.saber.util.PageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ public class ImageQueryService {
     private ImageRepository imageRepository;
     @Resource
     private ImageMapper imageMapper;
+    @Resource
+    private UserMapper userMapper;
 
     @Cacheable(keyGenerator = "keyGenerator")
     public PageVO queryAll(ImageDTO image, Pageable pageable) {
@@ -53,6 +57,14 @@ public class ImageQueryService {
             if (Objects.nonNull(image.getId())) {
                 // id 相等
                 predicates.add(cb.equal(root.get("id").as(Long.class), image.getId()));
+            }
+
+            if (Objects.nonNull(image.getDeleted())) {
+                predicates.add(cb.equal(root.get("deleted").as(Boolean.class), image.getDeleted()));
+            }
+
+            if (Objects.nonNull(image.getUser())) {
+                predicates.add(cb.equal(root.get("user").as(User.class), userMapper.toEntity(image.getUser())));
             }
 
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));

@@ -1,14 +1,18 @@
 package com.nekolr.saber.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 
 /**
  * User DTO
  */
-@Data
+@Getter
+@Setter
+@ToString
 public class UserDTO implements Serializable {
     /**
      * 用户 ID
@@ -36,4 +40,10 @@ public class UserDTO implements Serializable {
      * 邮箱
      */
     private String email;
+
+    @Override
+    public boolean equals(Object obj) {
+        UserDTO user = (UserDTO) obj;
+        return user.getId().equals(id);
+    }
 }

@@ -4,6 +4,10 @@ spring:
     name: saber
   jackson:
     time-zone: GMT+8
+  # spring mvc
+  mvc:
+    favicon:
+      enabled: false
   # spring jpa
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect

@@ -13,9 +13,7 @@ RUN mvn clean package
 
 FROM openjdk:8-jdk-alpine
 
-ARG VERSION=0.0.1.RELEASE
-
-COPY --from=build /usr/src/app/target/saber-${VERSION}.jar .
+COPY --from=build /usr/src/app/target/saber*.jar .
 
 EXPOSE 12001
 

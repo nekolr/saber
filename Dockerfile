@@ -15,6 +15,6 @@ FROM openjdk:8-jdk-alpine
 
 COPY --from=build /usr/src/app/target/saber*.jar .
 
-EXPOSE 12001
+EXPOSE 8888
 
 CMD java -jar saber-${VERSION}.jar

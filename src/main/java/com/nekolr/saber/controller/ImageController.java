@@ -26,6 +26,9 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -78,8 +81,7 @@ public class ImageController {
             markSupportStream.reset();
 
             Long id = idSeqService.save(new IdSeq()).getId();
-            // 生成文件名
-            String filename = hashids.encode(id) + "." + suffix;
+
             // 获取文件大小
             long size = image.getSize();
             // 文件 MINE 类型处理
@@ -90,6 +92,13 @@ public class ImageController {
             if (StringUtils.isBlank(contentType)) {
                 contentType = "image/png";
             }
+            // 有时候文件头比较特殊，比如 svg，此时使用上传文件后缀作为文件格式
+            if (StringUtils.isBlank(suffix)) {
+                List<String> partsOfName = Arrays.asList(StringUtils.split(originName, "."));
+                suffix = partsOfName.get(partsOfName.size() - 1);
+            }
+            // 生成文件名
+            String filename = hashids.encode(id) + "." + suffix;
 
             // 将文件上传
             shortName = storageService.upload(markSupportStream, filename, contentType, size);

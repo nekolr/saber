@@ -95,11 +95,15 @@ public class ImageController {
             // 有时候文件头比较特殊，比如 svg，此时使用上传文件后缀作为文件格式
             if (StringUtils.isBlank(suffix)) {
                 List<String> partsOfName = Arrays.asList(StringUtils.split(originName, "."));
-                suffix = partsOfName.get(partsOfName.size() - 1);
+                if (partsOfName.size() != 1) {
+                    suffix = partsOfName.get(partsOfName.size() - 1);
+                }
             }
             // 生成文件名
-            String filename = hashids.encode(id) + "." + suffix;
-
+            String filename = hashids.encode(id);
+            if (StringUtils.isNotBlank(suffix)) {
+                filename = filename + "." + suffix;
+            }
             // 将文件上传
             shortName = storageService.upload(markSupportStream, filename, contentType, size);
 

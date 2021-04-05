@@ -1,6 +1,5 @@
 package com.nekolr.saber.controller;
 
-import cn.hutool.core.io.FileTypeUtil;
 import com.nekolr.saber.entity.IdSeq;
 import com.nekolr.saber.entity.Image;
 import com.nekolr.saber.exception.ErrorResponse;
@@ -13,6 +12,7 @@ import com.nekolr.saber.service.query.ImageQueryService;
 import com.nekolr.saber.support.I18nUtils;
 import com.nekolr.saber.support.PageRequest;
 import com.nekolr.saber.support.SecurityContextHolder;
+import com.nekolr.saber.util.FileTypeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.hashids.Hashids;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;

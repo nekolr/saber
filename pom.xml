@@ -19,7 +19,6 @@
     <properties>
         <java.version>1.8</java.version>
         <jjwt.version>0.10.6</jjwt.version>
-        <hutool.version>4.5.9</hutool.version>
         <mapstruct.version>1.3.0.Final</mapstruct.version>
         <hashids.version>1.0.2</hashids.version>
     </properties>
@@ -90,12 +89,6 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
-        </dependency>
-        <!-- hutool-crypto -->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-crypto</artifactId>
-            <version>${hutool.version}</version>
         </dependency>
         <!-- mapstruct -->
         <dependency>

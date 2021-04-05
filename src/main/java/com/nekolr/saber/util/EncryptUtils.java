@@ -1,6 +1,6 @@
 package com.nekolr.saber.util;
 
-import cn.hutool.crypto.SecureUtil;
+import org.springframework.util.DigestUtils;
 
 /**
  * @author nekolr
@@ -14,6 +14,6 @@ public class EncryptUtils {
      * @return
      */
     public static String md5(String original) {
-        return SecureUtil.md5(original);
+        return DigestUtils.md5DigestAsHex(original.getBytes());
     }
 }

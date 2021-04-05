@@ -33,8 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private JwtUtils jwtUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -49,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = StringUtils.replace(header, Saber.TOKEN_HEADER_VALUE_PREFIX, "");
         try {
             // 只判断 token 合法有效，真正的用户信息通过查询数据库得到
-            JwtUser jwtUser = jwtUtils.parseJwt(jwt, SignatureAlgorithm.HS512);
+            JwtUser jwtUser = JwtUtils.parseJwt(jwt);
             // 只有在 Authentication 为空时才会放入
             if (Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
                 UserDTO user = userService.findByUsernameOrEmail(jwtUser.getUsername());

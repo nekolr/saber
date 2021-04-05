@@ -9,7 +9,6 @@ import com.nekolr.saber.support.JwtUtils;
 import com.nekolr.saber.support.SecurityContextHolder;
 import com.nekolr.saber.util.EncryptUtils;
 import com.nekolr.saber.util.IdGenerator;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +34,6 @@ public class AuthController {
     @Autowired
     private I18nUtils i18nUtils;
     @Autowired
-    private JwtUtils jwtUtils;
-    @Autowired
     private SecurityContextHolder securityContextHolder;
 
     @Value("${jwt.period}")
@@ -60,8 +57,8 @@ public class AuthController {
         }
 
         // 校验完成后签发 Token
-        String token = jwtUtils.issueJwt(IdGenerator.randomUUID(), authUser.getUsername(),
-                "", period.getSeconds(), "", SignatureAlgorithm.HS512);
+        String token = JwtUtils.issueJwt(IdGenerator.randomUUID(), authUser.getUsername(),
+                "", period.getSeconds(), "");
 
         return ResponseEntity.ok(new AuthenticationInfo(token, user));
     }

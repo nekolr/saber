@@ -49,8 +49,6 @@ logging:
 
 # jwt
 jwt:
-  # 私钥，为不少于 88 位的 Base64 字符串，当有泄露风险时请修改
-  secret: :xgj%eMd#gk+wh.`t2;XW!.dIuC&$#Lua+;%~!F=G&16Eo7b3o|GudHr%:?ijHQ3=G&:hVFcnQV?57f*)p!wNMG*Sfz%:pSU~5n,J|G%ro1blr'*'yD&z@Y&1Aa|=Bu:k
   # jwt 过期时间
   period: 1800s
 

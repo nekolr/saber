@@ -2,12 +2,9 @@ package com.nekolr.saber.support;
 
 import com.nekolr.saber.security.JwtUser;
 import io.jsonwebtoken.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 import java.util.Date;
 
 /**
@@ -15,31 +12,26 @@ import java.util.Date;
  *
  * @author nekolr
  */
-@Component
 public class JwtUtils {
 
     /**
      * 私钥
      */
-    @Value("${jwt.secret}")
-    private String secret;
+    private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     /**
      * 签发令牌
      *
-     * @param jwtId     令牌 ID
-     * @param subject   被签发者
-     * @param issuer    签发者
-     * @param period    有效时间，单位秒
-     * @param algorithm 加密算法
+     * @param jwtId   令牌 ID
+     * @param subject 被签发者
+     * @param issuer  签发者
+     * @param period  有效时间，单位秒
      * @return
      */
-    public String issueJwt(String jwtId, String subject, String issuer,
-                           Long period, String audience, SignatureAlgorithm algorithm) {
+    public static String issueJwt(String jwtId, String subject, String issuer,
+                                  Long period, String audience) {
         // 当前时间戳
         Long currentTimeMillis = System.currentTimeMillis();
-        // 私钥
-        byte[] secretKeyBytes = DatatypeConverter.parseBase64Binary(secret);
         // 创建 JwtBuilder
         JwtBuilder jwtBuilder = Jwts.builder();
 
@@ -65,10 +57,8 @@ public class JwtUtils {
 
         // 压缩方式，默认采用 deflate
         jwtBuilder.compressWith(CompressionCodecs.DEFLATE);
-        // 采用加密算法加密私钥
-        SecretKey secretKey = new SecretKeySpec(secretKeyBytes, algorithm.getJcaName());
         // 签发令牌
-        jwtBuilder.signWith(secretKey, algorithm);
+        jwtBuilder.signWith(SECRET_KEY, SignatureAlgorithm.HS512);
         // 生成令牌
         return jwtBuilder.compact();
     }
@@ -76,17 +66,13 @@ public class JwtUtils {
     /**
      * 解析 JWT
      *
-     * @param jwt       令牌
-     * @param algorithm 加密算法
+     * @param jwt 令牌
      * @return
      */
-    public JwtUser parseJwt(String jwt, SignatureAlgorithm algorithm) {
-        // 私钥
-        byte[] secretKeyBytes = DatatypeConverter.parseBase64Binary(secret);
-        // 通过加密算法加密私钥
-        SecretKey key = new SecretKeySpec(secretKeyBytes, algorithm.getJcaName());
+    public static JwtUser parseJwt(String jwt) {
         // 获取有效荷载
-        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(jwt).getBody();
+        Claims claims = Jwts.parserBuilder().setSigningKey(SECRET_KEY).build()
+                .parseClaimsJws(jwt).getBody();
 
         JwtUser jwtUser = new JwtUser();
         jwtUser.setJwtId(claims.getId());

@@ -9,13 +9,13 @@ import com.nekolr.saber.support.JwtUtils;
 import com.nekolr.saber.support.SecurityContextHolder;
 import com.nekolr.saber.util.EncryptUtils;
 import com.nekolr.saber.util.IdGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -29,11 +29,11 @@ import static com.nekolr.saber.security.AuthenticationUser.Register;
 @RequestMapping("auth")
 public class AuthController {
 
-    @Autowired
+    @Resource
     private UserService userService;
-    @Autowired
+    @Resource
     private I18nUtils i18nUtils;
-    @Autowired
+    @Resource
     private SecurityContextHolder securityContextHolder;
 
     @Value("${jwt.period}")

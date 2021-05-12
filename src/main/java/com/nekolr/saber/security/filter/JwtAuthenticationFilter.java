@@ -1,6 +1,6 @@
 package com.nekolr.saber.security.filter;
 
-import com.nekolr.saber.Saber;
+import com.nekolr.saber.support.Saber;
 import com.nekolr.saber.security.JwtUser;
 import com.nekolr.saber.service.UserService;
 import com.nekolr.saber.service.dto.UserDTO;
@@ -9,12 +9,12 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +31,7 @@ import java.util.Objects;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Autowired
+    @Resource
     private UserService userService;
 
     @Override

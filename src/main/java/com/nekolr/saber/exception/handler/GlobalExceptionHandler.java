@@ -5,7 +5,6 @@ import com.nekolr.saber.exception.ErrorResponse;
 import com.nekolr.saber.support.I18nUtils;
 import com.nekolr.saber.util.ThrowableUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -13,35 +12,31 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @Autowired
+    @Resource
     private I18nUtils i18nUtils;
 
     /**
      * 处理所有未知异常
-     *
-     * @param e
-     * @return
      */
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         log.error(ThrowableUtils.getStackTrace(e));
-        ErrorResponse errorResponse = new ErrorResponse(BAD_REQUEST.value(), e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(INTERNAL_SERVER_ERROR.value(), e.getMessage());
         return this.buildResponseEntity(errorResponse);
     }
 
     /**
      * 处理所有无效请求异常
-     *
-     * @param e
-     * @return
      */
     @ExceptionHandler(value = BadRequestException.class)
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException e) {
@@ -51,10 +46,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理所有无效请求异常
-     *
-     * @param e
-     * @return
+     * 处理所有请求参数绑定异常
      */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
@@ -66,9 +58,6 @@ public class GlobalExceptionHandler {
 
     /**
      * 构建错误消息
-     *
-     * @param errorList
-     * @return
      */
     private String buildErrorMessage(List<ObjectError> errorList) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -81,9 +70,6 @@ public class GlobalExceptionHandler {
 
     /**
      * 创建响应实体
-     *
-     * @param errorResponse
-     * @return
      */
     private ResponseEntity<ErrorResponse> buildResponseEntity(ErrorResponse errorResponse) {
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(errorResponse.getStatus()));

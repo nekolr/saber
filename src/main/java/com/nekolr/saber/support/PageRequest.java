@@ -1,10 +1,11 @@
 package com.nekolr.saber.support;
 
 import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 分页请求
@@ -23,15 +24,9 @@ public class PageRequest {
     private int size;
 
     /**
-     * 排序字段
+     * 排序列表
      */
-    @Setter
-    private String orderField;
-
-    /**
-     * Direction
-     */
-    private String order;
+    private List<Sort.Order> sorts = new ArrayList<>();
 
 
     public PageRequest() {
@@ -68,14 +63,24 @@ public class PageRequest {
         this.size = size;
     }
 
-    public void setOrder(String order) {
-        if (StringUtils.isNotBlank(order)) {
-            if (!"asc".equalsIgnoreCase(order) && !"desc".equalsIgnoreCase(order)) {
-                order = "asc";
-            }
-        }
-        this.order = order;
+    /**
+     * 添加一个排序
+     *
+     * @param property 排序字段
+     */
+    public void addAscOrder(String property) {
+        sorts.add(new Sort.Order(Sort.Direction.ASC, property));
     }
+
+    /**
+     * 添加一个排序
+     *
+     * @param property 排序字段
+     */
+    public void addDescOrder(String property) {
+        sorts.add(new Sort.Order(Sort.Direction.DESC, property));
+    }
+
 
     /**
      * 生成 Pageable
@@ -83,11 +88,6 @@ public class PageRequest {
      * @return
      */
     public Pageable toPageable() {
-        if (StringUtils.isBlank(this.order) || StringUtils.isBlank(this.orderField)) {
-            return org.springframework.data.domain.PageRequest.of(this.page - 1, this.size, Sort.unsorted());
-        } else {
-            return org.springframework.data.domain.PageRequest.of(this.page - 1, this.size,
-                    Sort.by(Sort.Direction.fromString(order), orderField));
-        }
+        return org.springframework.data.domain.PageRequest.of(this.page - 1, this.size, Sort.by(sorts));
     }
 }

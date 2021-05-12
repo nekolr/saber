@@ -1,9 +1,8 @@
 package com.nekolr.saber.service;
 
-
-import com.nekolr.saber.entity.Image;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.web.multipart.MultipartFile;
 
 @CacheConfig(cacheNames = "image")
 public interface ImageService {
@@ -14,7 +13,7 @@ public interface ImageService {
      * @return
      */
     @CacheEvict(allEntries = true)
-    Image saveImage(Image image);
+    String saveImage(MultipartFile image);
 
     /**
      * 删除 Image

@@ -2,13 +2,14 @@ package com.nekolr.saber.support;
 
 import com.nekolr.saber.exception.BadRequestException;
 import com.nekolr.saber.service.dto.UserDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 @Component
 public class SecurityContextHolder {
 
-    @Autowired
+    @Resource
     private I18nUtils i18nUtils;
 
     /**

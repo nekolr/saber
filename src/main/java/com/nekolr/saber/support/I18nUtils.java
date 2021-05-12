@@ -1,9 +1,10 @@
 package com.nekolr.saber.support;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * 国际化消息工具
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class I18nUtils {
 
-    @Autowired
+    @Resource
     private MessageSource messageSource;
 
     /**

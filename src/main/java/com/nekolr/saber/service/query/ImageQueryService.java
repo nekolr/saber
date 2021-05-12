@@ -5,10 +5,7 @@ import com.nekolr.saber.entity.Image;
 import com.nekolr.saber.entity.User;
 import com.nekolr.saber.service.dto.ImageDTO;
 import com.nekolr.saber.service.mapper.ImageMapper;
-import com.nekolr.saber.service.mapper.UserMapper;
-import com.nekolr.saber.support.PageVO;
-import com.nekolr.saber.util.PageUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nekolr.saber.support.SecurityContextHolder;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -29,24 +26,26 @@ import java.util.Objects;
 @CacheConfig(cacheNames = "image")
 public class ImageQueryService {
 
-    @Autowired
-    private ImageRepository imageRepository;
     @Resource
     private ImageMapper imageMapper;
     @Resource
-    private UserMapper userMapper;
+    private ImageRepository imageRepository;
+    @Resource
+    private SecurityContextHolder securityContextHolder;
 
     @Cacheable(keyGenerator = "keyGenerator")
-    public PageVO queryAll(ImageDTO image, Pageable pageable) {
-        Page<Image> users = imageRepository.findAll(new Spec(image), pageable);
-        return PageUtils.toPageVO(users.map(imageMapper::toDto));
+    public Page<ImageDTO> queryAll(ImageDTO image, Pageable pageable) {
+        // 只能获取自己的图片
+        image.setUser(securityContextHolder.getUser());
+        image.setDeleted(false);
+        return imageRepository.findAll(new Spec(imageMapper.toEntity(image)), pageable).map(e -> imageMapper.toDto(e));
     }
 
     class Spec implements Specification<Image> {
 
-        private ImageDTO image;
+        private Image image;
 
-        public Spec(ImageDTO image) {
+        public Spec(Image image) {
             this.image = image;
         }
 
@@ -64,7 +63,7 @@ public class ImageQueryService {
             }
 
             if (Objects.nonNull(image.getUser())) {
-                predicates.add(cb.equal(root.get("user").as(User.class), userMapper.toEntity(image.getUser())));
+                predicates.add(cb.equal(root.get("user").as(User.class), image.getUser()));
             }
 
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));

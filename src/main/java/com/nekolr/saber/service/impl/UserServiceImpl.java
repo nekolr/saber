@@ -9,24 +9,21 @@ import com.nekolr.saber.service.mapper.UserMapper;
 import com.nekolr.saber.support.I18nUtils;
 import com.nekolr.saber.util.EncryptUtils;
 import com.nekolr.saber.util.RandomUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Objects;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    @Resource
+    private I18nUtils i18nUtils;
     @Resource
     private UserMapper userMapper;
-    @Autowired
-    private I18nUtils i18nUtils;
+    @Resource
+    private UserRepository userRepository;
 
     @Override
     public UserDTO findByUsernameOrEmail(String usernameOrEmail) {

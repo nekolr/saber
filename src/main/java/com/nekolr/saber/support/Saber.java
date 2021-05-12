@@ -1,4 +1,4 @@
-package com.nekolr.saber;
+package com.nekolr.saber.support;
 
 /**
  * 全局常量

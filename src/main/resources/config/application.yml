@@ -14,7 +14,7 @@ spring:
     open-in-view: true
   # profile active dev
   profiles:
-    active: dev
+    active: prod
   # i18n
   messages:
     basename: i18n/messages

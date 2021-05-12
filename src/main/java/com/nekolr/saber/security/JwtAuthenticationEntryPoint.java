@@ -1,11 +1,11 @@
 package com.nekolr.saber.security;
 
 import com.nekolr.saber.support.I18nUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
 
-    @Autowired
+    @Resource
     private I18nUtils i18nUtils;
 
     @Override

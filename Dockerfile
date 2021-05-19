@@ -8,6 +8,11 @@ WORKDIR /usr/src/app
 
 COPY . .
 
+ARG NODE_VERSION=v14.17.0
+RUN apt install wget -y && wget https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.xz && tar -xf node-$NODE_VERSION-linux-x64.tar.xz
+RUN ln -s /usr/src/app/node-$NODE_VERSION-linux-x64/bin/node /usr/local/bin/node
+RUN ln -s /usr/src/app/node-$NODE_VERSION-linux-x64/bin/npm /usr/local/bin/npm
+
 RUN mvn clean package
 
 

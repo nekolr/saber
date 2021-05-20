@@ -1,5 +1,6 @@
 package com.nekolr.saber.controller;
 
+import com.nekolr.saber.exception.BadRequestException;
 import com.nekolr.saber.security.AuthenticationInfo;
 import com.nekolr.saber.security.AuthenticationUser;
 import com.nekolr.saber.service.UserService;
@@ -11,7 +12,6 @@ import com.nekolr.saber.util.EncryptUtils;
 import com.nekolr.saber.util.IdGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,7 +53,7 @@ public class AuthController {
 
         if (Objects.isNull(user) ||
                 !user.getPassword().equals(EncryptUtils.md5(authUser.getPassword() + user.getSalt()))) {
-            throw new AccountExpiredException(i18nUtils.getMessage("exceptions.user.invalid_username_or_password"));
+            throw new BadRequestException(i18nUtils.getMessage("exceptions.user.invalid_username_or_password"));
         }
 
         // 校验完成后签发 Token

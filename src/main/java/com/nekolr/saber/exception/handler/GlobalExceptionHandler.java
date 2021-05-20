@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = BadRequestException.class)
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException e) {
-        log.error(ThrowableUtils.getStackTrace(e));
+        log.error(e.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(e.getStatus(), e.getMessage());
         return this.buildResponseEntity(errorResponse);
     }
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.error(ThrowableUtils.getStackTrace(e));
+        log.error(e.getMessage());
         List<ObjectError> errorList = e.getBindingResult().getAllErrors();
         ErrorResponse errorResponse = new ErrorResponse(BAD_REQUEST.value(), this.buildErrorMessage(errorList));
         return this.buildResponseEntity(errorResponse);

@@ -32,6 +32,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().xssProtection().xssProtectionEnabled(true).and().and()
                 // 关闭 csrf
                 .csrf().disable()
+                // 关闭注销
+                .logout().disable()
                 // 授权异常处理
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).and()
                 // 不需要 session

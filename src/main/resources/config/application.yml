@@ -58,6 +58,6 @@ storage:
   type: filesystem
   filesystem:
     # 图片存放目录
-    imgFolder: ${user.home}/saber/
+    imgFolder: ${user.home}/saber/images/
     # 图片缓存时间控制，可以带单位
     cacheTime: 7d

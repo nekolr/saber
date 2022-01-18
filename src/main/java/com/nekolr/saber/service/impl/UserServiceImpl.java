@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setUsername(authUser.getUsername());
         user.setEmail(authUser.getEmail());
-        String salt = RandomUtils.randomString(6, false);
+        String salt = RandomUtils.randomString(6);
         user.setPassword(EncryptUtils.md5(authUser.getPassword() + salt));
         user.setSalt(salt);
 

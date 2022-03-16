@@ -1,7 +1,8 @@
 package com.nekolr.saber.config;
 
-import com.nekolr.saber.security.JwtAuthenticationEntryPoint;
-import com.nekolr.saber.security.filter.JwtAuthenticationFilter;
+import com.nekolr.saber.security.jwt.JwtAuthenticationEntryPoint;
+import com.nekolr.saber.security.jwt.JwtAuthenticationFilter;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,38 +11,55 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.annotation.Resource;
-
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Resource
-    private JwtAuthenticationEntryPoint authenticationEntryPoint;
-    @Resource
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                // X-Frame-Options: SAMEORIGIN
-                .headers().frameOptions().sameOrigin().and()
-                // X-Content-Type-Options: nosniff
-                .headers().contentTypeOptions().and().and()
-                // X-XSS-Protection: 1; mode=block
-                .headers().xssProtection().xssProtectionEnabled(true).and().and()
+
                 // 关闭 csrf
                 .csrf().disable()
+
+                // X-Frame-Options: SAMEORIGIN
+                .headers()
+                .frameOptions()
+                .sameOrigin()
+
+                // X-Content-Type-Options: nosniff
+                .and()
+                .headers()
+                .contentTypeOptions()
+
+                // X-XSS-Protection: 1; mode=block
+                .and().and()
+                .headers()
+                .xssProtection()
+                .xssProtectionEnabled(true)
+
                 // 授权异常处理
-                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).and()
+                .and().and()
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint)
+
                 // 不需要 session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
                 // 过滤请求
+                .and()
                 .authorizeRequests()
                 // OPTIONS 预检请求可以匿名访问
                 .antMatchers(HttpMethod.OPTIONS, "/**").anonymous()
                 // 登录请求不拦截（如果登录请求头包含 Authorization: Bearer 任意字符，那么还是会进行校验）
                 .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/auth/register").permitAll()
                 // 图片路径可以匿名访问
                 .antMatchers(HttpMethod.GET, "/images/**").anonymous()
                 // 静态资源可以匿名访问
@@ -52,6 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/favicon.png").anonymous()
                 // 主页可以匿名访问
                 .antMatchers(HttpMethod.GET, "/").anonymous()
+
                 // 所有请求都要经过验证
                 .anyRequest().authenticated();
 

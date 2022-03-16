@@ -1,7 +1,7 @@
 package com.nekolr.saber.service;
 
-import com.nekolr.saber.security.AuthenticationInfo;
-import com.nekolr.saber.security.AuthenticationUser;
+import com.nekolr.saber.security.LoginVo;
+import com.nekolr.saber.security.LoginReq;
 import com.nekolr.saber.service.dto.UserDTO;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -26,7 +26,7 @@ public interface UserService {
      * @return
      */
     @CacheEvict(allEntries = true)
-    UserDTO createUser(AuthenticationUser authUser);
+    UserDTO createUser(LoginReq authUser);
 
     /**
      * 登录
@@ -34,6 +34,6 @@ public interface UserService {
      * @param authUser
      * @return
      */
-    AuthenticationInfo login(AuthenticationUser authUser);
+    LoginVo login(LoginReq authUser);
 
 }

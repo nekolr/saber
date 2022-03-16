@@ -2,12 +2,13 @@ package com.nekolr.saber.support;
 
 import com.nekolr.saber.exception.BadRequestException;
 import com.nekolr.saber.service.dto.UserDTO;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
 @Component
-public class SecurityContextHolder {
+public class MySecurityContextHolder {
 
     @Resource
     private I18nUtils i18nUtils;
@@ -17,10 +18,10 @@ public class SecurityContextHolder {
      *
      * @return
      */
-    public UserDTO getUser() {
+    public UserDTO getCurrentUser() {
         UserDTO user;
         try {
-            user = (UserDTO) org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            user = (UserDTO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         } catch (Exception e) {
             throw new BadRequestException(i18nUtils.getMessage("exceptions.unauthorized"));
         }

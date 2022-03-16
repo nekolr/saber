@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 @ConditionalOnProperty(name = "storage.type", havingValue = "filesystem")
-public class WebConfig implements WebMvcConfigurer {
+public class WebResourceConfig implements WebMvcConfigurer {
 
     @Value("${storage.filesystem.imgFolder}")
     private String imgFolder;

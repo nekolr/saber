@@ -6,18 +6,17 @@ import com.nekolr.saber.entity.Image;
 import com.nekolr.saber.service.IdSeqService;
 import com.nekolr.saber.service.ImageService;
 import com.nekolr.saber.service.StorageService;
-import com.nekolr.saber.service.mapper.ImageMapper;
 import com.nekolr.saber.service.mapper.UserMapper;
 import com.nekolr.saber.support.I18nUtils;
-import com.nekolr.saber.support.SecurityContextHolder;
+import com.nekolr.saber.support.MySecurityContextHolder;
 import com.nekolr.saber.util.FileTypeUtil;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.hashids.Hashids;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,25 +25,23 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ImageServiceImpl implements ImageService {
 
-    @Resource
-    private Hashids hashids;
-    @Resource
-    private I18nUtils i18nUtils;
-    @Resource
-    private UserMapper userMapper;
-    @Resource
-    private ImageMapper imageMapper;
-    @Resource
-    private IdSeqService idSeqService;
-    @Resource
-    private StorageService storageService;
-    @Resource
-    private ImageRepository imageRepository;
-    @Resource
-    private SecurityContextHolder securityContextHolder;
+    private final Hashids hashids;
+    private final I18nUtils i18nUtils;
+    private final UserMapper userMapper;
+    private final IdSeqService idSeqService;
+    private final StorageService storageService;
+    private final ImageRepository imageRepository;
+    private final MySecurityContextHolder securityContextHolder;
 
+    /**
+     * TODO refactor
+     *
+     * @param image
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String saveImage(MultipartFile image) {
@@ -93,7 +90,7 @@ public class ImageServiceImpl implements ImageService {
             entity.setDeleted(false);
             entity.setShortName(shortName);
             entity.setSize(size);
-            entity.setUser(userMapper.toEntity(securityContextHolder.getUser()));
+            entity.setUser(userMapper.toEntity(securityContextHolder.getCurrentUser()));
 
             // 持久化文件信息到数据库
             imageRepository.save(entity);

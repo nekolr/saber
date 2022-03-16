@@ -1,4 +1,4 @@
-package com.nekolr.saber.security;
+package com.nekolr.saber.security.jwt;
 
 import com.nekolr.saber.support.I18nUtils;
 import org.springframework.security.core.AuthenticationException;
@@ -19,12 +19,12 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
-                         AuthenticationException authException) throws IOException {
+                         AuthenticationException exception) throws IOException {
 
-        /**
-         * 当用户尝试访问安全的 REST 资源而不提供任何凭证时，将调用此方法发送 401
-         */
+        // This is invoked when user tries to access a secured REST resource without supplying any credentials
+        // We should just send a 401 Unauthorized response because there is no 'login page' to redirect to
+        // Here you can place any message you want
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                authException == null ? i18nUtils.getMessage("exceptions.unauthorized") : authException.getMessage());
+                exception == null ? i18nUtils.getMessage("exceptions.unauthorized") : exception.getMessage());
     }
 }

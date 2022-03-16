@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-public class AuthenticationUser implements Serializable {
+public class LoginReq implements Serializable {
 
     @NotBlank(message = "exceptions.user.username_can_not_be_blank", groups = Login.class)
     private String username;

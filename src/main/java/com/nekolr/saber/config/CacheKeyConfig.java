@@ -11,7 +11,7 @@ import org.springframework.data.domain.PageRequest;
  * @author nekolr
  */
 @Configuration
-public class CacheConfig {
+public class CacheKeyConfig {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 

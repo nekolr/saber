@@ -3,35 +3,29 @@ package com.nekolr.saber.service.impl;
 import com.nekolr.saber.dao.UserRepository;
 import com.nekolr.saber.entity.User;
 import com.nekolr.saber.exception.BadRequestException;
-import com.nekolr.saber.security.AuthenticationInfo;
-import com.nekolr.saber.security.AuthenticationUser;
+import com.nekolr.saber.security.LoginVo;
+import com.nekolr.saber.security.LoginReq;
+import com.nekolr.saber.security.jwt.TokenProvider;
 import com.nekolr.saber.service.UserService;
 import com.nekolr.saber.service.dto.UserDTO;
 import com.nekolr.saber.service.mapper.UserMapper;
 import com.nekolr.saber.support.I18nUtils;
-import com.nekolr.saber.support.JwtUtils;
 import com.nekolr.saber.util.EncryptUtils;
-import com.nekolr.saber.util.IdGenerator;
 import com.nekolr.saber.util.RandomUtils;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import java.time.Duration;
 import java.util.Objects;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Value("${jwt.period}")
-    private Duration period;
-    @Resource
-    private I18nUtils i18nUtils;
-    @Resource
-    private UserMapper userMapper;
-    @Resource
-    private UserRepository userRepository;
+    private final I18nUtils i18nUtils;
+    private final UserMapper userMapper;
+    private final TokenProvider tokenProvider;
+    private final UserRepository userRepository;
 
     @Override
     public UserDTO findByUsernameOrEmail(String usernameOrEmail) {
@@ -40,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public UserDTO createUser(AuthenticationUser authUser) {
+    public UserDTO createUser(LoginReq authUser) {
 
         User usernameExist = userRepository.findByUsername(authUser.getUsername());
         if (!Objects.isNull(usernameExist)) {
@@ -63,19 +57,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthenticationInfo login(AuthenticationUser authUser) {
+    public LoginVo login(LoginReq loginReq) {
 
-        UserDTO user = findByUsernameOrEmail(authUser.getUsername());
+        UserDTO user = findByUsernameOrEmail(loginReq.getUsername());
 
         if (Objects.isNull(user) ||
-                !user.getPassword().equals(EncryptUtils.md5(authUser.getPassword() + user.getSalt()))) {
+                !user.getPassword().equals(EncryptUtils.md5(loginReq.getPassword() + user.getSalt()))) {
             throw new BadRequestException(i18nUtils.getMessage("exceptions.user.invalid_username_or_password"));
         }
 
-        // 校验完成后签发 Token
-        String token = JwtUtils.issueJwt(IdGenerator.randomUUID(), authUser.getUsername(),
-                "", period.getSeconds(), "");
+        String token = tokenProvider.createToken(user.getUsername());
 
-        return new AuthenticationInfo(token, user);
+        return new LoginVo(token, user);
     }
 }

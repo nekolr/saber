@@ -59,7 +59,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS, "/**").anonymous()
                 // 登录请求不拦截（如果登录请求头包含 Authorization: Bearer 任意字符，那么还是会进行校验）
                 .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/auth/register").permitAll()
                 // 图片路径可以匿名访问
                 .antMatchers(HttpMethod.GET, "/images/**").anonymous()
                 // 静态资源可以匿名访问

@@ -31,6 +31,7 @@ public class FileTypeUtil {
         fileTypeMap.put("89504e47", "png"); // PNG (png)
         fileTypeMap.put("4749463837", "gif"); // GIF (gif)
         fileTypeMap.put("4749463839", "gif"); // GIF (gif)
+        fileTypeMap.put("3C3F786D", "xml"); // XML
         fileTypeMap.put("49492a00227105008037", "tif"); // TIFF (tif)
         fileTypeMap.put("424d228c010000000000", "bmp"); // 16色位图 (bmp)
         fileTypeMap.put("424d8240090000000000", "bmp"); // 24位位图 (bmp)

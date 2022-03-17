@@ -21,8 +21,6 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -36,60 +34,31 @@ public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
     private final MySecurityContextHolder securityContextHolder;
 
-    /**
-     * TODO refactor
-     *
-     * @param image
-     * @return
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String saveImage(MultipartFile image) {
         String originName = image.getOriginalFilename();
         try {
-            InputStream in = image.getInputStream();
-            // 返回支持 mark 的流
-            InputStream markSupportStream = new BufferedInputStream(in);
-            // 标记
-            markSupportStream.mark(28);
-            // 读取文件头部的 28 个字节判断文件类型
-            String suffix = FileTypeUtil.getType(markSupportStream);
-            // 重置流
-            markSupportStream.reset();
-
-            // 获取文件大小
-            long size = image.getSize();
-            // 文件 MINE 类型处理
-            String contentType = image.getContentType();
-            if (StringUtils.isBlank(contentType)) {
-                contentType = URLConnection.guessContentTypeFromName(originName);
-            }
-            if (StringUtils.isBlank(contentType)) {
-                contentType = "image/png";
-            }
-            // 有时候文件头比较特殊，比如 svg，此时使用上传文件后缀作为文件格式
-            if (StringUtils.isBlank(suffix)) {
-                List<String> partsOfName = Arrays.asList(StringUtils.split(originName, "."));
-                if (partsOfName.size() != 1) {
-                    suffix = partsOfName.get(partsOfName.size() - 1);
-                }
-            }
-
+            InputStream inputStream = image.getInputStream();
+            // 通过文件头获取文件后缀
+            String suffix = this.getFileSuffix(inputStream);
+            // 处理文件 MIME 类型
+            String contentType = this.resolveContentType(image);
+            // 处理 svg 文件
+            suffix = this.judgeSvgFile(suffix, contentType);
+            // 生成唯一序列值
             Long id = idSeqService.save(new IdSeq()).getId();
             // 生成文件名
-            String filename = hashids.encode(id);
-            if (StringUtils.isNotBlank(suffix)) {
-                filename = filename + "." + suffix;
-            }
+            String filename = this.generateFilename(id, suffix);
             // 将文件上传
-            String shortName = storageService.upload(markSupportStream, filename, contentType, size);
+            String shortName = storageService.upload(inputStream, filename, contentType, image.getSize());
 
             Image entity = new Image();
             entity.setId(id);
             entity.setOriginName(originName);
             entity.setDeleted(false);
             entity.setShortName(shortName);
-            entity.setSize(size);
+            entity.setSize(image.getSize());
             entity.setUser(userMapper.toEntity(securityContextHolder.getCurrentUser()));
 
             // 持久化文件信息到数据库
@@ -100,6 +69,44 @@ public class ImageServiceImpl implements ImageService {
         } catch (IOException e) {
             throw new RuntimeException(i18nUtils.getMessage("exceptions.upload_file_failed"));
         }
+    }
+
+    private String generateFilename(Long id, String suffix) {
+        // 生成文件名
+        String filename = hashids.encode(id);
+        if (StringUtils.isNotBlank(suffix)) {
+            filename = filename + "." + suffix;
+        }
+        return filename;
+    }
+
+    private String getFileSuffix(InputStream input) throws IOException {
+        // 返回支持 mark 的流
+        InputStream markSupportStream = new BufferedInputStream(input);
+        // 标记
+        markSupportStream.mark(28);
+        // 读取文件头部的 28 个字节判断文件类型
+        String suffix = FileTypeUtil.getType(markSupportStream);
+        // 重置流
+        markSupportStream.reset();
+
+        return suffix;
+    }
+
+    private String resolveContentType(MultipartFile file) {
+        String originName = file.getOriginalFilename();
+        String contentType = file.getContentType();
+        if (StringUtils.isBlank(contentType)) {
+            contentType = URLConnection.guessContentTypeFromName(originName);
+        }
+        return contentType;
+    }
+
+    private String judgeSvgFile(String suffix, String contentType) {
+        if ("xml".equals(suffix) && "image/svg+xml".equals(contentType)) {
+            return "svg";
+        }
+        return suffix;
     }
 
     @Override

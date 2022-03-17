@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 只判断 token 合法有效，真正的用户信息通过查询数据库得到
                 UserDTO user = userService.findByUsernameOrEmail(username);
                 UsernamePasswordAuthenticationToken authenticationToken
-                        = new UsernamePasswordAuthenticationToken(user, null);
+                        = new UsernamePasswordAuthenticationToken(user, null, null);
 
                 log.info("set Authentication to security context for '{}', uri: {}", username, requestURI);
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);

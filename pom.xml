@@ -17,7 +17,7 @@
     <description>A simple image hosting service</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jjwt.version>0.11.2</jjwt.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
@@ -146,6 +146,20 @@
                     <source>${java.version}</source>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <skip>true</skip>
+                    <!-- JDK 9+ required this -->
+                    <annotationProcessorPaths>
+                        <!-- attention to the order: lombok first -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -217,7 +231,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>add-resource</id>

@@ -39,7 +39,7 @@ public class ImageServiceImpl implements ImageService {
     public String saveImage(MultipartFile image) {
         String originName = image.getOriginalFilename();
         try {
-            InputStream inputStream = image.getInputStream();
+            InputStream inputStream = this.wrapper(image.getInputStream());
             // 通过文件头获取文件后缀
             String suffix = this.getFileSuffix(inputStream);
             // 处理文件 MIME 类型
@@ -80,9 +80,11 @@ public class ImageServiceImpl implements ImageService {
         return filename;
     }
 
-    private String getFileSuffix(InputStream input) throws IOException {
-        // 返回支持 mark 的流
-        InputStream markSupportStream = new BufferedInputStream(input);
+    private InputStream wrapper(InputStream inputStream) {
+        return new BufferedInputStream(inputStream);
+    }
+
+    private String getFileSuffix(InputStream markSupportStream) throws IOException {
         // 标记
         markSupportStream.mark(28);
         // 读取文件头部的 28 个字节判断文件类型

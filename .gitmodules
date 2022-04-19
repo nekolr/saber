@@ -1,0 +1,3 @@
+[submodule "src/saber-chan"]
+	path = src/saber-chan
+	url = https://github.com/nekolr/saber-chan

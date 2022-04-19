@@ -34,7 +34,6 @@ spring:
 # tomcat
 server:
   port: 8888
-  address: 127.0.0.1
   tomcat:
     basedir: ${user.home}/saber/tmp
 

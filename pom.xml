@@ -12,7 +12,7 @@
 
     <groupId>com.nekolr</groupId>
     <artifactId>saber</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <name>saber</name>
     <description>A simple image hosting service</description>
 

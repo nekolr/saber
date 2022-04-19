@@ -4,10 +4,6 @@ spring:
     name: saber
   jackson:
     time-zone: GMT+8
-  # spring mvc
-  mvc:
-    favicon:
-      enabled: false
   # spring jpa
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
@@ -44,7 +40,8 @@ server:
 
 # log
 logging:
-  file: ${user.home}/saber/saber.log
+  file:
+    name: ${user.home}/saber/saber.log
   level.com.nekolr: info
 
 # jwt

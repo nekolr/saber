@@ -206,7 +206,7 @@
                                 <argument>install</argument>
                                 <argument>--registry=https://registry.npmmirror.com/</argument>
                             </arguments>
-                            <workingDirectory>${basedir}/src/saber-bowl</workingDirectory>
+                            <workingDirectory>${basedir}/src/saber-chan</workingDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -221,7 +221,7 @@
                                 <argument>run</argument>
                                 <argument>build</argument>
                             </arguments>
-                            <workingDirectory>${basedir}/src/saber-bowl</workingDirectory>
+                            <workingDirectory>${basedir}/src/saber-chan</workingDirectory>
                         </configuration>
                     </execution>
 
@@ -241,7 +241,7 @@
                         <configuration>
                             <resources>
                                 <resource>
-                                    <directory>src/saber-bowl/dist</directory>
+                                    <directory>src/saber-chan/dist</directory>
                                     <includes>
                                         <include>**/*</include>
                                     </includes>

@@ -62,10 +62,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 图片路径可以匿名访问
                 .antMatchers(HttpMethod.GET, "/images/**").anonymous()
                 // 静态资源可以匿名访问
-                .antMatchers(HttpMethod.GET, "/js/**").anonymous()
-                .antMatchers(HttpMethod.GET, "/css/**").anonymous()
-                .antMatchers(HttpMethod.GET, "/img/**").anonymous()
-                .antMatchers(HttpMethod.GET, "/fonts/**").anonymous()
+                .antMatchers(HttpMethod.GET, "/assets/**").anonymous()
+                .antMatchers(HttpMethod.GET, "/favicon.ico").anonymous()
                 .antMatchers(HttpMethod.GET, "/favicon.png").anonymous()
                 // 主页可以匿名访问
                 .antMatchers(HttpMethod.GET, "/").anonymous()

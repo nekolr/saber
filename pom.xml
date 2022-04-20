@@ -6,22 +6,22 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.18.RELEASE</version>
+        <version>2.6.6</version>
         <relativePath/>
     </parent>
 
     <groupId>com.nekolr</groupId>
     <artifactId>saber</artifactId>
-    <version>1.2.1</version>
+    <version>2.0.0</version>
     <name>saber</name>
     <description>A simple image hosting service</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jjwt.version>0.11.2</jjwt.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <hashids.version>1.0.2</hashids.version>
+        <hashids.version>1.0.3</hashids.version>
     </properties>
 
     <profiles>
@@ -87,12 +87,6 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- spring test -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
         <!-- commons-lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -134,6 +128,11 @@
             <artifactId>hashids</artifactId>
             <version>${hashids.version}</version>
         </dependency>
+        <!-- hibernate validator -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -147,6 +146,20 @@
                     <source>${java.version}</source>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <skip>true</skip>
+                    <!-- JDK 9+ required this -->
+                    <annotationProcessorPaths>
+                        <!-- attention to the order: lombok first -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -191,9 +204,9 @@
                             <executable>${npm}</executable>
                             <arguments>
                                 <argument>install</argument>
-                                <argument>--registry=https://registry.npm.taobao.org</argument>
+                                <argument>--registry=https://registry.npmmirror.com/</argument>
                             </arguments>
-                            <workingDirectory>${basedir}/src/saber-bowl</workingDirectory>
+                            <workingDirectory>${basedir}/src/saber-chan</workingDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -208,7 +221,7 @@
                                 <argument>run</argument>
                                 <argument>build</argument>
                             </arguments>
-                            <workingDirectory>${basedir}/src/saber-bowl</workingDirectory>
+                            <workingDirectory>${basedir}/src/saber-chan</workingDirectory>
                         </configuration>
                     </execution>
 
@@ -218,7 +231,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>add-resource</id>
@@ -229,7 +241,7 @@
                         <configuration>
                             <resources>
                                 <resource>
-                                    <directory>src/saber-bowl/dist</directory>
+                                    <directory>src/saber-chan/dist</directory>
                                     <includes>
                                         <include>**/*</include>
                                     </includes>

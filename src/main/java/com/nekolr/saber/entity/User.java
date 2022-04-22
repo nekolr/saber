@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Setter
 @ToString
 @Entity
-@Table(name = "user")
+@Table(name = "account")
 public class User implements Serializable {
 
     /**

@@ -22,6 +22,7 @@
         <jjwt.version>0.11.2</jjwt.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <hashids.version>1.0.3</hashids.version>
+        <h2.version>2.1.212</h2.version>
     </properties>
 
     <profiles>
@@ -80,6 +81,7 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
+            <version>${h2.version}</version>
         </dependency>
         <!-- lombok -->
         <dependency>

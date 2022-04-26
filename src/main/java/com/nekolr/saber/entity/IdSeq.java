@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class IdSeq implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_seq_sequence")
-    @SequenceGenerator(name = "id_seq_sequence", initialValue = 329, allocationSize = 1)
+    @SequenceGenerator(name = "id_seq_sequence", initialValue = 589, allocationSize = 1)
     @Id
     private Long id;
 }

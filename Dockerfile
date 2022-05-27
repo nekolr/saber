@@ -7,10 +7,7 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-ARG NODE_VERSION=v16.14.2
-RUN apt-get update && apt install wget xz-utils -y && wget https://nodejs.org/download/release/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.xz && tar -xf node-$NODE_VERSION-linux-x64.tar.xz
-RUN ln -s /usr/src/app/node-$NODE_VERSION-linux-x64/bin/node /usr/local/bin/node
-RUN ln -s /usr/src/app/node-$NODE_VERSION-linux-x64/bin/npm /usr/local/bin/npm
+RUN apt-get update && apt install curl -y && curl -sL https://deb.nodesource.com/setup_16.x | bash - && apt-get install nodejs -y
 
 RUN mvn clean package
 

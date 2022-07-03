@@ -19,7 +19,7 @@
     <properties>
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jjwt.version>0.11.2</jjwt.version>
+        <jjwt.version>0.11.5</jjwt.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <hashids.version>1.0.3</hashids.version>
         <h2.version>2.1.212</h2.version>

@@ -1,5 +1,4 @@
-# https://github.com/nekolr/maven-image/tree/master/3.8.1-jdk-11-slim
-FROM nekolr/maven:3.8.1-jdk-11-slim AS build
+FROM maven:3.8.1-openjdk-11-slim AS build
 
 RUN mkdir -p /usr/src/app
 

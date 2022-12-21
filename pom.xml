@@ -6,23 +6,23 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.6</version>
+        <version>3.0.0</version>
         <relativePath/>
     </parent>
 
     <groupId>com.nekolr</groupId>
     <artifactId>saber</artifactId>
-    <version>2.1.1</version>
+    <version>2.2.0</version>
     <name>saber</name>
     <description>A simple image hosting service</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jjwt.version>0.11.5</jjwt.version>
-        <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <mapstruct.version>1.5.3.Final</mapstruct.version>
         <hashids.version>1.0.3</hashids.version>
-        <h2.version>2.1.212</h2.version>
+        <h2.version>2.1.214</h2.version>
     </properties>
 
     <profiles>

@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import static com.nekolr.saber.security.LoginReq.Login;
 import static com.nekolr.saber.security.LoginReq.Register;

@@ -5,7 +5,7 @@ import com.nekolr.saber.service.dto.UserDTO;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 @Component
 public class MySecurityContextHolder {

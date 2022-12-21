@@ -1,4 +1,4 @@
-FROM maven:3.8.1-openjdk-11-slim AS build
+FROM maven:3.8.5-openjdk-17-slim AS build
 
 RUN mkdir -p /usr/src/app
 
@@ -11,7 +11,7 @@ RUN apt-get update && apt install curl -y && curl -sL https://deb.nodesource.com
 RUN mvn clean package
 
 
-FROM openjdk:11.0.11-jre-slim
+FROM openjdk:17-slim
 
 COPY --from=build /usr/src/app/target/saber.jar .
 

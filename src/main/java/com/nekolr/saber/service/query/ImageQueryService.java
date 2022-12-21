@@ -14,10 +14,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -61,7 +62,7 @@ public class ImageQueryService {
             }
 
             if (Objects.nonNull(image.getUser())) {
-                predicates.add(cb.equal(root.get("user").as(User.class), image.getUser()));
+                predicates.add(cb.equal(root.get("user"), image.getUser()));
             }
 
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));

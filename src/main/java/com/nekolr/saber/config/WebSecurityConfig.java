@@ -2,25 +2,26 @@ package com.nekolr.saber.config;
 
 import com.nekolr.saber.security.jwt.JwtAuthenticationEntryPoint;
 import com.nekolr.saber.security.jwt.JwtAuthenticationFilter;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+@RequiredArgsConstructor
+public class WebSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
 
                 // 关闭 csrf
@@ -40,7 +41,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().and()
                 .headers()
                 .xssProtection()
-                .xssProtectionEnabled(true)
 
                 // 授权异常处理
                 .and().and()
@@ -54,19 +54,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // 过滤请求
                 .and()
-                .authorizeRequests()
+                .authorizeHttpRequests()
                 // OPTIONS 预检请求可以匿名访问
-                .antMatchers(HttpMethod.OPTIONS, "/**").anonymous()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").anonymous()
                 // 登录请求不拦截（如果登录请求头包含 Authorization: Bearer 任意字符，那么还是会进行校验）
-                .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 // 图片路径可以匿名访问
-                .antMatchers(HttpMethod.GET, "/images/**").anonymous()
+                .requestMatchers(HttpMethod.GET, "/images/**").anonymous()
                 // 静态资源可以匿名访问
-                .antMatchers(HttpMethod.GET, "/assets/**").anonymous()
-                .antMatchers(HttpMethod.GET, "/favicon.ico").anonymous()
-                .antMatchers(HttpMethod.GET, "/favicon.png").anonymous()
+                .requestMatchers(HttpMethod.GET, "/assets/**").anonymous()
+                .requestMatchers(HttpMethod.GET, "/favicon.ico").anonymous()
+                .requestMatchers(HttpMethod.GET, "/favicon.png").anonymous()
                 // 主页可以匿名访问
-                .antMatchers(HttpMethod.GET, "/").anonymous()
+                .requestMatchers(HttpMethod.GET, "/").anonymous()
+                .requestMatchers(HttpMethod.GET, "/index.html").anonymous()
 
                 // 所有请求都要经过验证
                 .anyRequest().authenticated();
@@ -74,5 +75,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 // 添加权限校验过滤器
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return httpSecurity.build();
     }
 }

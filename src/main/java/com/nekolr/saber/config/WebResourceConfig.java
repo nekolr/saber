@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -19,6 +20,8 @@ public class WebResourceConfig implements WebMvcConfigurer {
     private String imgFolder;
     @Value("${storage.filesystem.cacheTime}")
     private Duration cacheTime;
+    @Value("${cors.allowOrigin}")
+    private String allowOrigin;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -28,5 +31,13 @@ public class WebResourceConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:///" + imgFolder.replace("\\", "/"))
                 .setCacheControl(CacheControl.maxAge(cacheTime.get(ChronoUnit.SECONDS), TimeUnit.SECONDS));
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins(allowOrigin)
+                .allowCredentials(true)
+                .allowedHeaders("*");
     }
 }

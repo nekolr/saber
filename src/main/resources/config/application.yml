@@ -47,6 +47,8 @@ logging:
 jwt:
   # jwt 过期时间
   period: 1800s
+cors:
+  allowOrigin: ${ALLOW_ORIGIN:http://locahost:8888}
 
 # storage
 storage:

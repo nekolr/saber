@@ -38,6 +38,7 @@ public class WebResourceConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(allowOrigin)
                 .allowCredentials(true)
+                .allowedMethods("*")
                 .allowedHeaders("*");
     }
 }

@@ -11,4 +11,5 @@ spring:
 
 # 输出 SQL 绑定的参数
 logging:
-  level.org.hibernate.type.descriptor.sql.BasicBinder: trace
+  level:
+    org.hibernate.type.descriptor.sql.BasicBinder: trace

@@ -41,7 +41,8 @@ server:
 logging:
   file:
     name: ${user.home}/saber/saber.log
-  level.com.nekolr: info
+  level:
+    com.nekolr: info
 
 # jwt
 jwt:

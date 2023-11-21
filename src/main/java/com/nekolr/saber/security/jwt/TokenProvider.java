@@ -2,7 +2,6 @@ package com.nekolr.saber.security.jwt;
 
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +21,7 @@ public class TokenProvider {
 
     public TokenProvider(@Value("${jwt.period}") Duration period) {
         this.period = period;
-        this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        this.secretKey = Jwts.SIG.HS256.key().build();
     }
 
     public String createToken(String username) {

@@ -6,7 +6,6 @@ spring:
     time-zone: GMT+8
   # spring jpa
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     open-in-view: true
   # profile active dev
   profiles:

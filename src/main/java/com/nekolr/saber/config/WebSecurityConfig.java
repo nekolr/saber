@@ -1,6 +1,5 @@
 package com.nekolr.saber.config;
 
-import com.nekolr.saber.security.jwt.JwtAuthenticationEntryPoint;
 import com.nekolr.saber.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +19,6 @@ import org.springframework.security.web.header.writers.XXssProtectionHeaderWrite
 public class WebSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -37,9 +35,6 @@ public class WebSecurityConfig {
 
                 // X-XSS-Protection: 1; mode=block
                 .headers(configurer -> configurer.xssProtection(config -> config.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK)))
-
-                // 授权异常处理
-                .exceptionHandling(configurer -> configurer.authenticationEntryPoint(authenticationEntryPoint))
 
                 // 不需要 session
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

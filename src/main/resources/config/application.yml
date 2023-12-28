@@ -59,3 +59,8 @@ storage:
     imgFolder: ${user.home}/saber/images/
     # 图片缓存时间控制，可以带单位
     cacheTime: 7d
+
+info:
+  app:
+    name: @project.artifactId@
+    version: @project.version@

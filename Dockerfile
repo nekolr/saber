@@ -16,4 +16,4 @@ COPY --from=build /usr/src/app/target/saber.jar .
 
 EXPOSE 8888
 
-CMD java -Djava.security.egd=file:/dev/./urandom -jar saber.jar
+CMD ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "saber.jar"]

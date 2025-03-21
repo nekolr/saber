@@ -21,6 +21,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -46,6 +47,9 @@ public class ImageServiceImpl implements ImageService {
             String contentType = this.resolveContentType(image);
             // 处理 svg 文件
             suffix = this.judgeSvgFile(suffix, contentType);
+            if (Objects.isNull(suffix)) {
+                suffix = getExtName(originName);
+            }
             // 生成唯一序列值
             Long id = idSeqService.save(new IdSeq()).getId();
             // 生成文件名
@@ -93,6 +97,17 @@ public class ImageServiceImpl implements ImageService {
         markSupportStream.reset();
 
         return suffix;
+    }
+
+    private String getExtName(String filename) {
+        if (StringUtils.isEmpty(filename)) {
+            return null;
+        }
+        final int index = filename.lastIndexOf(".");
+        if (index == -1) {
+            return null;
+        }
+        return filename.substring(filename.lastIndexOf(".") + 1);
     }
 
     private String resolveContentType(MultipartFile file) {

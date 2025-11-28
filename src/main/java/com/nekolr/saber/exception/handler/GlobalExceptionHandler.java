@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.annotation.Resource;
+
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -63,7 +64,7 @@ public class GlobalExceptionHandler {
         StringBuilder stringBuilder = new StringBuilder();
         for (ObjectError error : errorList) {
             String message = i18nUtils.getMessage(error.getDefaultMessage());
-            stringBuilder.append(message + ", ");
+            stringBuilder.append(message).append(", ");
         }
         return stringBuilder.substring(0, stringBuilder.length() - 2);
     }

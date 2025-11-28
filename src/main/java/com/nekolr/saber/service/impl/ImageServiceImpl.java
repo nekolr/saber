@@ -13,6 +13,8 @@ import com.nekolr.saber.util.FileTypeUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.hashids.Hashids;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +27,7 @@ import java.util.Objects;
 
 @Service
 @AllArgsConstructor
+@CacheConfig(cacheNames = "image")
 public class ImageServiceImpl implements ImageService {
 
     private final Hashids hashids;
@@ -36,42 +39,36 @@ public class ImageServiceImpl implements ImageService {
     private final MySecurityContextHolder securityContextHolder;
 
     @Override
+    @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public String saveImage(MultipartFile image) {
+        this.validateImageFile(image);
+
         String originName = image.getOriginalFilename();
+        InputStream inputStream = null;
+
         try {
-            InputStream inputStream = this.wrapper(image.getInputStream());
-            // 通过文件头获取文件后缀
-            String suffix = this.getFileSuffix(inputStream);
-            // 处理文件 MIME 类型
-            String contentType = this.resolveContentType(image);
-            // 处理 svg 文件
-            suffix = this.judgeSvgFile(suffix, contentType);
-            if (Objects.isNull(suffix)) {
-                suffix = getExtName(originName);
-            }
-            // 生成唯一序列值
+            inputStream = this.wrapper(image.getInputStream());
+
+            // 解析文件信息
+            FileMetadata metadata = resolveFileMetadata(inputStream, image, originName);
+
+            // 生成唯一序列值和文件名
             Long id = idSeqService.save(new IdSeq()).getId();
-            // 生成文件名
-            String filename = this.generateFilename(id, suffix);
-            // 将文件上传
-            String shortName = storageService.upload(inputStream, filename, contentType, image.getSize());
+            String filename = this.generateFilename(id, metadata.suffix);
 
-            Image entity = new Image();
-            entity.setId(id);
-            entity.setOriginName(originName);
-            entity.setDeleted(false);
-            entity.setShortName(shortName);
-            entity.setSize(image.getSize());
-            entity.setUser(userMapper.toEntity(securityContextHolder.getCurrentUser()));
+            // 上传文件
+            String shortName = storageService.upload(inputStream, filename, metadata.contentType, image.getSize());
 
-            // 持久化文件信息到数据库
-            imageRepository.save(entity);
+            // 保存文件信息到数据库
+            saveImageEntity(id, originName, shortName, image.getSize());
 
             return shortName;
 
         } catch (IOException e) {
-            throw new RuntimeException(i18nUtils.getMessage("exceptions.upload_file_failed"));
+            throw new RuntimeException(i18nUtils.getMessage("exceptions.upload_file_failed"), e);
+        } finally {
+            closeStream(inputStream);
         }
     }
 
@@ -127,6 +124,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     @Transactional(rollbackFor = Exception.class)
     public void deleteImage(Long id) {
         imageRepository.findById(id).ifPresent(image -> {
@@ -134,5 +132,76 @@ public class ImageServiceImpl implements ImageService {
             image.setDeleted(true);
             imageRepository.save(image);
         });
+    }
+
+    /**
+     * 验证图片文件
+     */
+    private void validateImageFile(MultipartFile image) {
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException(i18nUtils.getMessage("exceptions.file_empty"));
+        }
+        if (image.getSize() <= 0) {
+            throw new IllegalArgumentException(i18nUtils.getMessage("exceptions.file_size_invalid"));
+        }
+    }
+
+    /**
+     * 解析文件元数据
+     */
+    private FileMetadata resolveFileMetadata(InputStream inputStream, MultipartFile image, String originName) throws IOException {
+        // 通过文件头获取文件后缀
+        String suffix = this.getFileSuffix(inputStream);
+        // 处理文件 MIME 类型
+        String contentType = this.resolveContentType(image);
+        // 处理 svg 文件
+        suffix = this.judgeSvgFile(suffix, contentType);
+        if (Objects.isNull(suffix)) {
+            suffix = getExtName(originName);
+        }
+
+        return new FileMetadata(suffix, contentType);
+    }
+
+    /**
+     * 保存图片实体信息
+     */
+    private void saveImageEntity(Long id, String originName, String shortName, Long size) {
+        Image entity = new Image();
+        entity.setId(id);
+        entity.setOriginName(originName);
+        entity.setDeleted(false);
+        entity.setShortName(shortName);
+        entity.setSize(size);
+        entity.setUser(userMapper.toEntity(securityContextHolder.getCurrentUser()));
+
+        // 持久化文件信息到数据库
+        imageRepository.save(entity);
+    }
+
+    /**
+     * 安全关闭流
+     */
+    private void closeStream(InputStream inputStream) {
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                // 记录日志或忽略关闭异常
+            }
+        }
+    }
+
+    /**
+     * 文件元数据内部类
+     */
+    private static class FileMetadata {
+        String suffix;
+        String contentType;
+
+        FileMetadata(String suffix, String contentType) {
+            this.suffix = suffix;
+            this.contentType = contentType;
+        }
     }
 }

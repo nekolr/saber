@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * All storage service should implements this interface
- *
- * @author nekolr
+ * All storage service should implement this interface
  */
 public interface StorageService {
 
@@ -23,8 +21,6 @@ public interface StorageService {
 
     /**
      * Delete file
-     *
-     * @param filename
      */
     void delete(String filename);
 }

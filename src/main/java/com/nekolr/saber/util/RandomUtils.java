@@ -18,7 +18,6 @@ public class RandomUtils {
      * 获取随机字符串
      *
      * @param length 字符串的长度
-     * @return
      */
     public static String randomString(int length) {
         final int len = ORIGINAL_CHARS.length;

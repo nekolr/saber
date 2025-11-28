@@ -45,8 +45,6 @@ public class FileSystemStorageServiceImpl implements StorageService {
      * 获取文件存储的目录，目录不存在时会自动创建
      * <p>
      * example: 2019\06\22
-     *
-     * @return
      */
     private String getParentPath(String savePath) {
         String parent = savePath + File.separator + DateUtils.currentSaveDate();

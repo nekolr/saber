@@ -15,8 +15,6 @@ public class MySecurityContextHolder {
 
     /**
      * 获取用户信息
-     *
-     * @return
      */
     public UserDTO getCurrentUser() {
         UserDTO user;

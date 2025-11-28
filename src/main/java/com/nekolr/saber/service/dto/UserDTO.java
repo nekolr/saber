@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * User DTO
@@ -41,9 +42,16 @@ public class UserDTO implements Serializable {
      */
     private String email;
 
+
     @Override
-    public boolean equals(Object obj) {
-        UserDTO user = (UserDTO) obj;
-        return user.getId().equals(id);
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDTO userDTO = (UserDTO) o;
+        return Objects.equals(id, userDTO.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

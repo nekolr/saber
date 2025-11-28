@@ -26,7 +26,7 @@ public class PageRequest {
     /**
      * 排序列表
      */
-    private List<Sort.Order> sorts = new ArrayList<>();
+    private final List<Sort.Order> sorts = new ArrayList<>();
 
 
     public PageRequest() {
@@ -84,8 +84,6 @@ public class PageRequest {
 
     /**
      * 生成 Pageable
-     *
-     * @return
      */
     public Pageable toPageable() {
         return org.springframework.data.domain.PageRequest.of(this.page - 1, this.size, Sort.by(sorts));

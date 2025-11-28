@@ -21,7 +21,6 @@ public class I18nUtils {
      * 获取消息
      *
      * @param code 消息编码
-     * @return
      */
     public String getMessage(String code) {
         return this.getMessage(code, null);
@@ -32,7 +31,6 @@ public class I18nUtils {
      *
      * @param code 消息编码
      * @param args 参数值
-     * @return
      */
     public String getMessage(String code, Object[] args) {
         return this.getMessage(code, args, "");
@@ -44,7 +42,6 @@ public class I18nUtils {
      * @param code           消息编码
      * @param args           参数值
      * @param defaultMessage 默认消息值
-     * @return
      */
     public String getMessage(String code, Object[] args, String defaultMessage) {
         return messageSource.getMessage(code, args, defaultMessage, LocaleContextHolder.getLocale());

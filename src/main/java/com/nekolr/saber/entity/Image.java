@@ -63,8 +63,6 @@ public class Image implements Serializable {
 
     /**
      * 重写 toString
-     *
-     * @return
      */
     @Override
     public String toString() {

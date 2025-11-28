@@ -5,12 +5,12 @@ WORKDIR /usr/src/app
 COPY . .
 RUN apt-get update \
     && apt install curl -y  \
-    && curl -sL https://deb.nodesource.com/setup_20.x | bash -  \
+    && curl -sL https://deb.nodesource.com/setup_22.x | bash -  \
     && apt-get install nodejs -y
 RUN mvn clean package
 
 
-FROM openjdk:21-slim
+FROM eclipse-temurin:21
 
 COPY --from=build /usr/src/app/target/saber.jar .
 

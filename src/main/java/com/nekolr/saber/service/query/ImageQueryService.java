@@ -2,7 +2,6 @@ package com.nekolr.saber.service.query;
 
 import com.nekolr.saber.dao.ImageRepository;
 import com.nekolr.saber.entity.Image;
-import com.nekolr.saber.entity.User;
 import com.nekolr.saber.service.dto.ImageDTO;
 import com.nekolr.saber.service.mapper.ImageMapper;
 import com.nekolr.saber.support.MySecurityContextHolder;
@@ -40,9 +39,9 @@ public class ImageQueryService {
         return imageRepository.findAll(new Spec(imageMapper.toEntity(image)), pageable).map(e -> imageMapper.toDto(e));
     }
 
-    class Spec implements Specification<Image> {
+    static class Spec implements Specification<Image> {
 
-        private Image image;
+        private final Image image;
 
         public Spec(Image image) {
             this.image = image;
@@ -65,7 +64,7 @@ public class ImageQueryService {
                 predicates.add(cb.equal(root.get("user"), image.getUser()));
             }
 
-            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+            return cb.and(predicates.toArray(new Predicate[0]));
         }
     }
 }

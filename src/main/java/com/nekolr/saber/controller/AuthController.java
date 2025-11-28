@@ -1,7 +1,9 @@
 package com.nekolr.saber.controller;
 
-import com.nekolr.saber.security.LoginReq;
+import com.nekolr.saber.security.LoginRequest;
+import com.nekolr.saber.security.LoginVo;
 import com.nekolr.saber.service.UserService;
+import com.nekolr.saber.service.dto.UserDTO;
 import com.nekolr.saber.support.MySecurityContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -9,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.annotation.Resource;
 
-import static com.nekolr.saber.security.LoginReq.Login;
-import static com.nekolr.saber.security.LoginReq.Register;
+import static com.nekolr.saber.security.LoginRequest.Login;
+import static com.nekolr.saber.security.LoginRequest.Register;
 
 /**
  * 身份凭证控制器
@@ -26,33 +28,25 @@ public class AuthController {
 
     /**
      * 用户登录
-     *
-     * @param loginReq 登录信息
-     * @return
      */
     @PostMapping("/login")
-    public ResponseEntity login(@Validated({Login.class}) @RequestBody LoginReq loginReq) {
-        return ResponseEntity.ok(userService.login(loginReq));
+    public ResponseEntity<LoginVo> login(@Validated({Login.class}) @RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(userService.login(loginRequest));
     }
 
     /**
      * 用户注册
-     *
-     * @param loginReq
-     * @return
      */
     @PostMapping("/register")
-    public ResponseEntity register(@Validated({Register.class, Login.class}) @RequestBody LoginReq loginReq) {
-        return ResponseEntity.ok(userService.createUser(loginReq));
+    public ResponseEntity<UserDTO> register(@Validated({Register.class, Login.class}) @RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(userService.createUser(loginRequest));
     }
 
     /**
      * 获取当前用户信息
-     *
-     * @return
      */
     @GetMapping("/info")
-    public ResponseEntity currentUserInfo() {
+    public ResponseEntity<UserDTO> currentUserInfo() {
         return ResponseEntity.ok(mySecurityContextHolder.getCurrentUser());
     }
 }

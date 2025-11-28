@@ -14,8 +14,6 @@ import jakarta.annotation.Resource;
 
 /**
  * Image controller
- *
- * @author nekolr
  */
 @RestController
 @RequestMapping("api")
@@ -28,9 +26,6 @@ public class ImageController {
 
     /**
      * 上传文件
-     *
-     * @param image
-     * @return
      */
     @PostMapping("/upload")
     public ResponseEntity<String> upload(@RequestParam(name = "image") MultipartFile image) {
@@ -39,10 +34,6 @@ public class ImageController {
 
     /**
      * 获取图片列表，带分页
-     *
-     * @param image
-     * @param pageRequest
-     * @return
      */
     @GetMapping("/images")
     public ResponseEntity<Page<ImageDTO>> getImages(ImageDTO image, PageRequest pageRequest) {
@@ -51,12 +42,10 @@ public class ImageController {
 
     /**
      * 删除图片
-     *
-     * @return
      */
     @DeleteMapping("/images")
-    public ResponseEntity deleteImage(Long id) {
+    public ResponseEntity<Void> deleteImage(Long id) {
         imageService.deleteImage(id);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

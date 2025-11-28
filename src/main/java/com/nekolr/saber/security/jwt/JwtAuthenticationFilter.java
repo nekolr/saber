@@ -1,6 +1,6 @@
 package com.nekolr.saber.security.jwt;
 
-import com.nekolr.saber.service.UserService;
+import com.nekolr.saber.service.UserQueryService;
 import com.nekolr.saber.service.dto.UserDTO;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
@@ -27,8 +27,8 @@ import static com.nekolr.saber.support.Saber.TOKEN_HEADER_VALUE_PREFIX;
 @AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final UserService userService;
     private final TokenProvider tokenProvider;
+    private final UserQueryService userQueryService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 只有在 Authentication 为空时才会放入
             if (Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
                 // 只判断 token 合法有效，真正的用户信息通过查询数据库得到
-                UserDTO user = userService.findByUsernameOrEmail(username);
+                UserDTO user = userQueryService.findByUsernameOrEmail(username);
                 UsernamePasswordAuthenticationToken authenticationToken
                         = new UsernamePasswordAuthenticationToken(user, null, null);
 

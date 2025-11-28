@@ -36,7 +36,7 @@ public class ImageQueryService {
         // 只能获取自己的图片
         image.setUser(mySecurityContextHolder.getCurrentUser());
         image.setDeleted(false);
-        return imageRepository.findAll(new Spec(imageMapper.toEntity(image)), pageable).map(e -> imageMapper.toDto(e));
+        return imageRepository.findAll(new Spec(imageMapper.toEntity(image)), pageable).map(imageMapper::toDto);
     }
 
     static class Spec implements Specification<Image> {

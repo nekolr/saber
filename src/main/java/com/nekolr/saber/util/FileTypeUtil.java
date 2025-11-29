@@ -1,6 +1,6 @@
 package com.nekolr.saber.util;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -98,7 +98,7 @@ public class FileTypeUtil {
      */
     private static String getType(String fileStreamHexHead) {
         for (Map.Entry<String, String> fileTypeEntry : fileTypeMap.entrySet()) {
-            if (StringUtils.startsWithIgnoreCase(fileStreamHexHead, fileTypeEntry.getKey())) {
+            if (Strings.CI.startsWith(fileStreamHexHead, fileTypeEntry.getKey())) {
                 return fileTypeEntry.getValue();
             }
         }
@@ -132,9 +132,6 @@ public class FileTypeUtil {
     /**
      * 将字节数组转换为十六进制字符串
      *
-     * @param data
-     * @param toDigits
-     * @return
      */
     private static String encodeHexStr(byte[] data, char[] toDigits) {
         return new String(encodeHex(data, toDigits));

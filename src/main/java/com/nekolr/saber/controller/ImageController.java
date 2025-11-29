@@ -4,6 +4,7 @@ import com.nekolr.saber.service.ImageService;
 import com.nekolr.saber.service.dto.ImageDTO;
 import com.nekolr.saber.service.query.ImageQueryService;
 import com.nekolr.saber.support.PageRequest;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class ImageController {
      * 上传文件
      */
     @PostMapping("/upload")
-    public ResponseEntity<String> upload(@RequestParam(name = "image") MultipartFile image) {
+    public ResponseEntity<@NonNull String> upload(@RequestParam(name = "image") MultipartFile image) {
         return ResponseEntity.ok(imageService.saveImage(image));
     }
 
@@ -36,7 +37,7 @@ public class ImageController {
      * 获取图片列表，带分页
      */
     @GetMapping("/images")
-    public ResponseEntity<Page<ImageDTO>> getImages(ImageDTO image, PageRequest pageRequest) {
+    public ResponseEntity<@NonNull Page<@NonNull ImageDTO>> getImages(ImageDTO image, PageRequest pageRequest) {
         return ResponseEntity.ok(imageQueryService.queryAll(image, pageRequest.toPageable()));
     }
 
@@ -44,7 +45,7 @@ public class ImageController {
      * 删除图片
      */
     @DeleteMapping("/images")
-    public ResponseEntity<Void> deleteImage(Long id) {
+    public ResponseEntity<@NonNull Void> deleteImage(Long id) {
         imageService.deleteImage(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -6,6 +6,7 @@ import com.nekolr.saber.service.dto.ImageDTO;
 import com.nekolr.saber.service.mapper.ImageMapper;
 import com.nekolr.saber.support.MySecurityContextHolder;
 import lombok.AllArgsConstructor;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@NullMarked
 @AllArgsConstructor
 @CacheConfig(cacheNames = "image")
 public class ImageQueryService {

@@ -1,13 +1,19 @@
 package com.nekolr.saber.security.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nekolr.saber.config.ThreadLocalContext;
 import com.nekolr.saber.service.UserQueryService;
 import com.nekolr.saber.service.dto.UserDTO;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -19,16 +25,29 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.nekolr.saber.support.Saber.TOKEN_HEADER_KEY;
-import static com.nekolr.saber.support.Saber.TOKEN_HEADER_VALUE_PREFIX;
-
 @Slf4j
 @Component
+@NullMarked
 @AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
     private final UserQueryService userQueryService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    // 白名单路径模式
+    private static final String[] WHITE_LIST_PATTERNS = {
+            "/",
+            "/images/**",
+            "/assets/**",
+            "/index.html",
+            "/favicon.ico",
+            "/favicon.png"
+    };
+
+    // 需要特定 HTTP 方法的白名单路径
+    private static final String METHOD_SPECIFIC_LOGIN = "/auth/login";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -36,29 +55,71 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         String jwt = this.resolveToken(request);
 
-        Claims claims;
-        if (StringUtils.hasText(jwt) && (claims = tokenProvider.getClaims(jwt)) != null) {
-            String username = claims.getSubject();
-            // 只有在 Authentication 为空时才会放入
-            if (Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
-                // 只判断 token 合法有效，真正的用户信息通过查询数据库得到
-                UserDTO user = userQueryService.findByUsernameOrEmail(username);
-                UsernamePasswordAuthenticationToken authenticationToken
-                        = new UsernamePasswordAuthenticationToken(user, null, null);
-
-                log.debug("set Authentication to security context for '{}', uri: {}", username, requestURI);
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        try {
+            // 检查是否为不需要认证的路径
+            if (isAnonymous(requestURI, request.getMethod())) {
+                chain.doFilter(request, response);
+                return;
             }
-        } else {
-            log.debug("no valid JWT token found, uri: {}", requestURI);
-        }
 
-        chain.doFilter(request, response);
+            Claims claims;
+            if (StringUtils.hasText(jwt) && (claims = tokenProvider.getClaims(jwt)) != null) {
+                String username = claims.getSubject();
+                UserDTO userDTO = ThreadLocalContext.getUser();
+                if (Objects.isNull(userDTO)) {
+
+                    // 只判断 token 合法有效，真正的用户信息通过查询数据库得到
+                    UserDTO user = userQueryService.findByUsernameOrEmail(username);
+                    if (Objects.nonNull(user)) {
+                        ThreadLocalContext.setUser(user);
+                        log.debug("set Authentication to thread local context for '{}', uri: {}", username, requestURI);
+                    } else {
+                        sendUnauthorizedResponse(response);
+                        return;
+                    }
+                }
+                chain.doFilter(request, response);
+            } else {
+                log.debug("no valid JWT token found, uri: {}", requestURI);
+                sendUnauthorizedResponse(response);
+            }
+        } finally {
+            // 清理 ThreadLocal，防止内存泄漏
+            ThreadLocalContext.removeUser();
+        }
     }
 
-    private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(TOKEN_HEADER_KEY);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TOKEN_HEADER_VALUE_PREFIX)) {
+    private boolean isAnonymous(String requestURI, String method) {
+        // OPTIONS 预检请求可以匿名访问
+        if ("OPTIONS".equals(method)) {
+            return true;
+        }
+
+        // 登录请求不拦截（只允许 POST 方法）
+        if (pathMatcher.match(METHOD_SPECIFIC_LOGIN, requestURI) && "POST".equals(method)) {
+            return true;
+        }
+
+        // 检查是否匹配白名单路径模式
+        for (String pattern : WHITE_LIST_PATTERNS) {
+            if (pathMatcher.match(pattern, requestURI)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void sendUnauthorizedResponse(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json;charset=UTF-8");
+        ResponseEntity<Void> responseEntity = new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        response.getWriter().write(objectMapper.writeValueAsString(responseEntity));
+    }
+
+    private @Nullable String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;

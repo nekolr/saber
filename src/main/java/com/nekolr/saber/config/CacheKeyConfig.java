@@ -30,7 +30,7 @@ public class CacheKeyConfig {
                     try {
                         sb.append(mapper.writeValueAsString(obj).hashCode());
                     } catch (JsonProcessingException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
                 }
             }

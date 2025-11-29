@@ -5,6 +5,7 @@ import com.nekolr.saber.security.LoginVo;
 import com.nekolr.saber.service.UserService;
 import com.nekolr.saber.service.dto.UserDTO;
 import com.nekolr.saber.support.MySecurityContextHolder;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class AuthController {
      * 用户登录
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginVo> login(@Validated({Login.class}) @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<@NonNull LoginVo> login(@Validated({Login.class}) @RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(userService.login(loginRequest));
     }
 
@@ -38,7 +39,7 @@ public class AuthController {
      * 用户注册
      */
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@Validated({Register.class, Login.class}) @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<@NonNull UserDTO> register(@Validated({Register.class, Login.class}) @RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(userService.createUser(loginRequest));
     }
 
@@ -46,7 +47,7 @@ public class AuthController {
      * 获取当前用户信息
      */
     @GetMapping("/info")
-    public ResponseEntity<UserDTO> currentUserInfo() {
+    public ResponseEntity<@NonNull UserDTO> currentUserInfo() {
         return ResponseEntity.ok(mySecurityContextHolder.getCurrentUser());
     }
 }

@@ -2,4 +2,4 @@
 ( (`  / /\  | |_) | |_  | |_)
 _)_) /_/--\ |_|_) |_|__ |_| \
 
- :: ${info.app.name} ::${info.app.version}
+ :: ${info.app.name} :: ${info.app.version}

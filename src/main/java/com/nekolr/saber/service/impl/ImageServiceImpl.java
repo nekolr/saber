@@ -7,8 +7,8 @@ import com.nekolr.saber.service.IdSeqService;
 import com.nekolr.saber.service.ImageService;
 import com.nekolr.saber.service.StorageService;
 import com.nekolr.saber.service.mapper.UserMapper;
+import com.nekolr.saber.support.ContextHolder;
 import com.nekolr.saber.support.I18nUtils;
-import com.nekolr.saber.support.MySecurityContextHolder;
 import com.nekolr.saber.util.FileTypeUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -34,9 +34,9 @@ public class ImageServiceImpl implements ImageService {
     private final I18nUtils i18nUtils;
     private final UserMapper userMapper;
     private final IdSeqService idSeqService;
+    private final ContextHolder contextHolder;
     private final StorageService storageService;
     private final ImageRepository imageRepository;
-    private final MySecurityContextHolder securityContextHolder;
 
     @Override
     @CacheEvict(allEntries = true)
@@ -66,7 +66,7 @@ public class ImageServiceImpl implements ImageService {
             return shortName;
 
         } catch (IOException e) {
-            throw new RuntimeException(i18nUtils.getMessage("exceptions.upload_file_failed"), e);
+            throw new RuntimeException(i18nUtils.getMessage("exception.file.upload_failed"), e);
         } finally {
             closeStream(inputStream);
         }
@@ -139,10 +139,10 @@ public class ImageServiceImpl implements ImageService {
      */
     private void validateImageFile(MultipartFile image) {
         if (image == null || image.isEmpty()) {
-            throw new IllegalArgumentException(i18nUtils.getMessage("exceptions.file_empty"));
+            throw new IllegalArgumentException(i18nUtils.getMessage("exception.file.empty"));
         }
         if (image.getSize() <= 0) {
-            throw new IllegalArgumentException(i18nUtils.getMessage("exceptions.file_size_invalid"));
+            throw new IllegalArgumentException(i18nUtils.getMessage("exception.file.size_invalid"));
         }
     }
 
@@ -173,7 +173,7 @@ public class ImageServiceImpl implements ImageService {
         entity.setDeleted(false);
         entity.setShortName(shortName);
         entity.setSize(size);
-        entity.setUser(userMapper.toEntity(securityContextHolder.getCurrentUser()));
+        entity.setUser(userMapper.toEntity(contextHolder.getCurrentUser()));
 
         // 持久化文件信息到数据库
         imageRepository.save(entity);

@@ -1,9 +1,9 @@
 package com.nekolr.saber.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nekolr.saber.config.ThreadLocalContext;
 import com.nekolr.saber.service.UserQueryService;
 import com.nekolr.saber.service.dto.UserDTO;
+import com.nekolr.saber.support.ContextHolder;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +32,7 @@ import java.util.Objects;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
+    private final ContextHolder contextHolder;
     private final UserQueryService userQueryService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
@@ -55,37 +56,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         String jwt = this.resolveToken(request);
 
-        try {
-            // 检查是否为不需要认证的路径
-            if (isAnonymous(requestURI, request.getMethod())) {
-                chain.doFilter(request, response);
-                return;
-            }
+        // 检查是否为不需要认证的路径
+        if (isAnonymous(requestURI, request.getMethod())) {
+            chain.doFilter(request, response);
+            return;
+        }
 
-            Claims claims;
-            if (StringUtils.hasText(jwt) && (claims = tokenProvider.getClaims(jwt)) != null) {
-                String username = claims.getSubject();
-                UserDTO userDTO = ThreadLocalContext.getUser();
-                if (Objects.isNull(userDTO)) {
+        Claims claims;
+        if (StringUtils.hasText(jwt) && (claims = tokenProvider.getClaims(jwt)) != null) {
+            String username = claims.getSubject();
+            UserDTO userDTO = contextHolder.getCurrentUser();
+            if (Objects.isNull(userDTO)) {
 
-                    // 只判断 token 合法有效，真正的用户信息通过查询数据库得到
-                    UserDTO user = userQueryService.findByUsernameOrEmail(username);
-                    if (Objects.nonNull(user)) {
-                        ThreadLocalContext.setUser(user);
-                        log.debug("set Authentication to thread local context for '{}', uri: {}", username, requestURI);
-                    } else {
-                        sendUnauthorizedResponse(response);
-                        return;
-                    }
+                // 只判断 token 合法有效，真正的用户信息通过查询数据库得到
+                UserDTO user = userQueryService.findByUsernameOrEmail(username);
+                if (Objects.nonNull(user)) {
+                    // 使用 ScopedValue 在整个过滤器链执行期间绑定用户信息
+                    contextHolder.runWithUser(user, () -> {
+                        log.debug("set Authentication to scoped context for '{}', uri: {}", username, requestURI);
+                        try {
+                            chain.doFilter(request, response);
+                        } catch (IOException | ServletException e) {
+                            log.error("Error processing filter chain", e);
+                            throw new RuntimeException(e);
+                        }
+                    });
+                } else {
+                    sendUnauthorizedResponse(response);
                 }
-                chain.doFilter(request, response);
             } else {
-                log.debug("no valid JWT token found, uri: {}", requestURI);
-                sendUnauthorizedResponse(response);
+                // 用户已存在，直接执行过滤器链
+                chain.doFilter(request, response);
             }
-        } finally {
-            // 清理 ThreadLocal，防止内存泄漏
-            ThreadLocalContext.removeUser();
+        } else {
+            log.debug("no valid JWT token found, uri: {}", requestURI);
+            sendUnauthorizedResponse(response);
         }
     }
 

@@ -4,6 +4,7 @@ import com.nekolr.saber.service.ImageService;
 import com.nekolr.saber.service.dto.ImageDTO;
 import com.nekolr.saber.service.query.ImageQueryService;
 import com.nekolr.saber.support.PageRequest;
+import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -11,19 +12,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.annotation.Resource;
-
 /**
  * Image controller
  */
 @RestController
 @RequestMapping("api")
+@RequiredArgsConstructor
 public class ImageController {
 
-    @Resource
-    private ImageService imageService;
-    @Resource
-    private ImageQueryService imageQueryService;
+
+    private final ImageService imageService;
+    private final ImageQueryService imageQueryService;
 
     /**
      * 上传文件

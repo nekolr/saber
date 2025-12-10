@@ -3,17 +3,16 @@ package com.nekolr.saber.service.impl;
 import com.nekolr.saber.dao.IdSeqRepository;
 import com.nekolr.saber.entity.IdSeq;
 import com.nekolr.saber.service.IdSeqService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.annotation.Resource;
-
 
 @Service
+@AllArgsConstructor
 public class IdSeqServiceImpl implements IdSeqService {
 
-    @Resource
-    private IdSeqRepository idSeqRepository;
+    private final IdSeqRepository idSeqRepository;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

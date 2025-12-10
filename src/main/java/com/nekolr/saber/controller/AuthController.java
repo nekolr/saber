@@ -4,13 +4,12 @@ import com.nekolr.saber.security.LoginRequest;
 import com.nekolr.saber.security.LoginVo;
 import com.nekolr.saber.service.UserService;
 import com.nekolr.saber.service.dto.UserDTO;
-import com.nekolr.saber.support.MySecurityContextHolder;
+import com.nekolr.saber.support.ContextHolder;
+import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.annotation.Resource;
 
 import static com.nekolr.saber.security.LoginRequest.Login;
 import static com.nekolr.saber.security.LoginRequest.Register;
@@ -20,12 +19,11 @@ import static com.nekolr.saber.security.LoginRequest.Register;
  */
 @RestController
 @RequestMapping("auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Resource
-    private UserService userService;
-    @Resource
-    private MySecurityContextHolder mySecurityContextHolder;
+    private final UserService userService;
+    private final ContextHolder contextHolder;
 
     /**
      * 用户登录
@@ -48,6 +46,6 @@ public class AuthController {
      */
     @GetMapping("/info")
     public ResponseEntity<@NonNull UserDTO> currentUserInfo() {
-        return ResponseEntity.ok(mySecurityContextHolder.getCurrentUser());
+        return ResponseEntity.ok(contextHolder.getCurrentUser());
     }
 }

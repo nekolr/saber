@@ -17,7 +17,7 @@
     <description>A simple image hosting service</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jjwt.version>0.13.0</jjwt.version>
         <mapstruct.version>1.6.3</mapstruct.version>
@@ -139,6 +139,7 @@
     </dependencies>
 
     <build>
+        <finalName>saber</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -155,7 +156,6 @@
                     <source>${java.version}</source>
                     <encoding>${project.build.sourceEncoding}</encoding>
                     <skip>true</skip>
-                    <!-- JDK 9+ required this -->
                     <annotationProcessorPaths>
                         <!-- attention to the order: lombok first -->
                         <path>
@@ -183,7 +183,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <finalName>saber</finalName>
                     <mainClass>com.nekolr.saber.SaberApplication</mainClass>
                     <excludes>
                         <exclude>

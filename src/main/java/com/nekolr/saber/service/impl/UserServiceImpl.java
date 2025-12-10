@@ -39,12 +39,12 @@ public class UserServiceImpl implements UserService {
 
         User usernameExist = userRepository.findByUsername(authUser.getUsername());
         if (!Objects.isNull(usernameExist)) {
-            throw new RuntimeException(i18nUtils.getMessage("exceptions.user.username_exist"));
+            throw new RuntimeException(i18nUtils.getMessage("exception.user.username_exists"));
         }
 
         User emailExist = userRepository.findByEmail(authUser.getEmail());
         if (!Objects.isNull(emailExist)) {
-            throw new RuntimeException(i18nUtils.getMessage("exceptions.user.email_exist"));
+            throw new RuntimeException(i18nUtils.getMessage("exception.user.email_exists"));
         }
 
         User user = new User();
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
         if (Objects.isNull(user) ||
                 !user.getPassword().equals(EncryptUtils.md5(loginRequest.getPassword() + user.getSalt()))) {
-            throw new BadRequestException(i18nUtils.getMessage("exceptions.user.invalid_username_or_password"));
+            throw new BadRequestException(i18nUtils.getMessage("exception.user.invalid_credentials"));
         }
 
         String token = tokenProvider.createToken(user.getUsername());

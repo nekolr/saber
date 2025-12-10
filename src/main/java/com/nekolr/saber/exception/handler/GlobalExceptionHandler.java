@@ -4,6 +4,7 @@ import com.nekolr.saber.exception.BadRequestException;
 import com.nekolr.saber.exception.ErrorResponse;
 import com.nekolr.saber.support.I18nUtils;
 import com.nekolr.saber.util.ThrowableUtils;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import jakarta.annotation.Resource;
-
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -22,10 +21,10 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestControllerAdvice
 @Slf4j
+@AllArgsConstructor
 public class GlobalExceptionHandler {
 
-    @Resource
-    private I18nUtils i18nUtils;
+    private final I18nUtils i18nUtils;
 
     /**
      * 处理所有未知异常
@@ -33,7 +32,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<@NonNull ErrorResponse> handleException(Exception e) {
         log.error(ThrowableUtils.getStackTrace(e));
-        ErrorResponse errorResponse = new ErrorResponse(INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        String message = i18nUtils.getMessage("exception.internal.server_error");
+        ErrorResponse errorResponse = new ErrorResponse(INTERNAL_SERVER_ERROR.value(), message);
         return this.buildResponseEntity(errorResponse);
     }
 
@@ -63,11 +63,16 @@ public class GlobalExceptionHandler {
      */
     private String buildErrorMessage(List<ObjectError> errorList) {
         StringBuilder stringBuilder = new StringBuilder();
+        String separator = i18nUtils.getMessage("message.separator");
         for (ObjectError error : errorList) {
             String message = i18nUtils.getMessage(error.getDefaultMessage());
-            stringBuilder.append(message).append(", ");
+            stringBuilder.append(message).append(separator).append(" ");
         }
-        return stringBuilder.substring(0, stringBuilder.length() - 2);
+        // 移除最后的分隔符和空格
+        if (stringBuilder.length() > 0) {
+            stringBuilder.setLength(stringBuilder.length() - separator.length() - 1);
+        }
+        return stringBuilder.toString();
     }
 
     /**

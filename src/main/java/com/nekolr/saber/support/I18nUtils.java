@@ -1,21 +1,18 @@
 package com.nekolr.saber.support;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Resource;
-
 /**
  * 国际化消息工具
- *
- * @author nekolr
  */
 @Component
+@AllArgsConstructor
 public class I18nUtils {
 
-    @Resource
-    private MessageSource messageSource;
+    private final MessageSource messageSource;
 
     /**
      * 获取消息

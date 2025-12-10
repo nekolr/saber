@@ -16,14 +16,14 @@ import java.io.Serializable;
 @ToString
 public class LoginRequest implements Serializable {
 
-    @NotBlank(message = "exceptions.user.username_can_not_be_blank", groups = Login.class)
+    @NotBlank(message = "exception.user.username_required", groups = Login.class)
     private String username;
 
-    @NotBlank(message = "exceptions.user.password_can_not_be_blank", groups = Login.class)
+    @NotBlank(message = "exception.user.password_required", groups = Login.class)
     private String password;
 
-    @Email(message = "exceptions.user.email_format_error", groups = Register.class)
-    @NotBlank(message = "exceptions.user.email_can_not_be_blank", groups = Register.class)
+    @Email(message = "exception.user.email_invalid", groups = Register.class)
+    @NotBlank(message = "exception.user.email_required", groups = Register.class)
     private String email;
 
 
